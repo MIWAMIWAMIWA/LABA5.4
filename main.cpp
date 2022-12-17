@@ -1,145 +1,95 @@
 #include <iostream>
-class table{
- public:
-  int x;
-  int y;
-  table(int x, int y);
+#include <vector>
+using namespace std;
+class Object_Of_Room {
+  private:
+   int x_coordinate;
+   int y_coordinate;
+  public:
+   void set_x_coordinate(int new_coordinate);
+   void set_y_coordinate(int new_coordinate);
+   int get_x_coordinate();
+   int get_y_coordinate();
+   explicit Object_Of_Room(int new_x_coordinate,int new_y_coordinate);
+
 };
-table::table(int a, int b) {
-  x = a;
-  y = b;
+void Object_Of_Room::set_x_coordinate(int new_coordinate){
+  this->x_coordinate=new_coordinate;
 }
-class carpet{
- public:
-  int x;
-  int y;
-  carpet(int x, int y);
+void Object_Of_Room::set_y_coordinate(int new_coordinate){
+  this->y_coordinate=new_coordinate;
+}
+int Object_Of_Room::get_x_coordinate(){
+  return this->x_coordinate;
+}
+int Object_Of_Room::get_y_coordinate(){
+  return this->y_coordinate;
+}
+Object_Of_Room::Object_Of_Room(int new_x_coordinate,int new_y_coordinate){
+  this->x_coordinate=new_x_coordinate;
+  this->y_coordinate=new_y_coordinate;
+} 
+class Table:public Object_Of_Room {
+public:
+  using Object_Of_Room::Object_Of_Room;
 };
-carpet::carpet(int a, int b) {
-  x = a;
-  y = b;
-}
-class bed{
- public:
-  int x;
-  int y;
-  bed(int x, int y);
+class Bed:public Object_Of_Room {
+public:
+ using Object_Of_Room::Object_Of_Room;
 };
-bed::bed(int a, int b) {
-  x = a;
-  y = b;
-}
-class room{
- public:
- bed *ptr1[1000];
- int beds_c=0;
- carpet *ptr2[1000];
- int carpets_c=0;
- table *ptr3[1000];
- int tables_c=0;
- void adding(int x,int y,int id);
- void remove(int id);
- void rearengment();
- ~room();
+class Carpet:public Object_Of_Room {
+public:
+ using Object_Of_Room::Object_Of_Room;
 };
-void room::adding(int x,int y, int id){
-  switch(id){
-    case 1:
-      bed *b_current;
-      b_current=new bed(x,y);
-      ptr1[beds_c++]=b_current;
-      break;
-    case 2:
-      carpet *c_current;
-      c_current=new carpet(x,y);
-      ptr2[carpets_c++]=c_current;
-      break;
-    case 3:
-      table *t_current;
-      t_current=new table(x,y);
-      ptr3[tables_c++]=t_current;
-      break;
-    default:
-      std::cout<<"unknown id\n";
+class Room{
+  private:
+   vector<Object_Of_Room>vector_of_obj;
+  public:
+    void adding_an_obj(Object_Of_Room current);
+    void delete_an_obj();
+    void rearengment_of_obj();
+    void review_of_obj();
+    Room(vector<Object_Of_Room>new_vector);
+    ~Room();
+};
+void Room::adding_an_obj(Object_Of_Room current){
+  this->vector_of_obj.push_back(current);
 }
-  }
-void room::remove(int id){
-  switch(id){
-    case 1:
-      bed *b_current;
-      b_current=ptr1[--beds_c];
-      delete b_current;
-      break;
-    case 2:
-      carpet *c_current;
-      c_current=ptr2[--carpets_c];
-      delete c_current;
-      break;
-    case 3:
-      table *t_current;
-      t_current=ptr3[--tables_c];
-      delete t_current;
-      break;
-    default:
-      std::cout<<"unknown id\n";
-  }
+void Room::delete_an_obj(){
+  this->vector_of_obj.erase(this->vector_of_obj.end());
 }
-void room::rearengment(){
-  int i=0;
-  bed *b_current;
-  carpet *c_current;
-  table *t_current;
-  while (i<beds_c){
-    b_current=ptr1[i];
-    b_current->x=rand();
-    b_current->y=rand();
-    i++;
-  }
-  i=0;
-  while (i<carpets_c){
-    c_current=ptr2[i];
-    c_current->x=rand();
-    c_current->y=rand();
-    i++;
+void Room::rearengment_of_obj(){
+    vector<Object_Of_Room>::iterator current_object;
+   for (auto current_object = this->vector_of_obj.begin(); current_object != this->vector_of_obj.end(); ++current_object){ 
+     current_object->set_x_coordinate(rand());
+     current_object->set_y_coordinate(rand());
+     }
 }
-  i=0;
-  while (i<tables_c){
-    t_current=ptr3[i];
-    t_current->x=rand();
-    t_current->y=rand();
-    i++;
-    }
-  }
-room::~room(void){
-  int i=0;
-  bed *b_current;
-  carpet *c_current;
-  table *t_current;
-  while (i<beds_c){
-    b_current=ptr1[i];
-    delete b_current;
-    i++;
-  }
-  i=0;
-  while (i<carpets_c){
-    c_current=ptr2[i];
-    delete c_current;
-    i++;
+void Room::review_of_obj(){
+  vector<Object_Of_Room>::iterator current_object;
+   for (auto current_object = this->vector_of_obj.begin(); current_object != this->vector_of_obj.end(); ++current_object){
+     cout<<"x is ";
+     cout<<current_object->get_x_coordinate()<<" , ";
+     cout<<"y is ";
+     cout<<current_object->get_y_coordinate()<<endl;
+     }
 }
-  i=0;
-  while (i<tables_c){
-    t_current=ptr3[i];
-    delete c_current;
-    i++;
-    }
-  std::cout<<"destructor called\n";
+Room::Room(vector<Object_Of_Room>new_vector){
+  this->vector_of_obj=new_vector;
+}
+Room::~Room(){
+  this->vector_of_obj.clear();
 }
 int main() {
-  room room1;
-  room1.adding(23,54,1);
-  room1.adding(54,67,2);
-  room1.remove(2);
-  room1.rearengment();
-  std::cout<<room1.ptr1[0]->x<<std::endl;
-  std::cout<<room1.ptr1[0]->y<<std::endl;
+  vector<Object_Of_Room>vector1;
+  Room room1(vector1);
+  Table table1(23,423);
+  Carpet carpet1(43,53);
+  Bed bed1(42,54);
+  room1.adding_an_obj(table1);
+  room1.adding_an_obj(carpet1);
+  room1.adding_an_obj(bed1);
+  room1.review_of_obj();
+  room1.rearengment_of_obj();
+  room1.review_of_obj();
 }
